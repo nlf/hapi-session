@@ -49,6 +49,10 @@ Scheme.prototype.authenticate = function (request, callback) {
         }
 
         sessionId = request.state[self.settings.cookie];
+        if (typeof sessionId !== 'string') {
+            return unauthenticated(self.hapi.error.unauthorized());
+        }
+
         request.server.pack._cache.get({ segment: '_sessions', id: sessionId }, function (err, session) {
             if (!session) {
                 return unauthenticated(self.hapi.error.unauthorized());
@@ -115,6 +119,11 @@ Scheme.prototype.extend = function (request) {
 
             if (request.state.hasOwnProperty(self.settings.cookie)) {
                 sessionId = request.state[self.settings.cookie];
+                if (typeof sessionId !== 'string') {
+                    // we have an invalid cookie set, so overwrite it
+                    sessionId = rack();
+                    request.setState(self.settings.cookie, sessionId);
+                }
                 // we have a session id already, so just fetch it and reuse it
             } else {
                 sessionId = rack();
