@@ -1,0 +1,27 @@
+{
+  "name": "hapi-session",
+  "version": "0.0.1",
+  "description": "A simpler session based auth plugin for Hapi",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nlf/hapi-session.git"
+  },
+  "keywords": [
+    "hapi",
+    "session",
+    "auth"
+  ],
+  "author": "Nathan LaFreniere <quitlahok@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nlf/hapi-session/issues"
+  },
+  "dependencies": {
+    "hat": "0.0.3",
+    "hoek": "~1.1.0"
+  },
+  "devDependencies": {
+    "precommit-hook": "~0.3.8"
+  }
+}
