@@ -17,6 +17,7 @@ var Scheme = function (server, options) {
 
     var cookieOptions = {
         encoding: 'iron',
+        ttl: this.settings.ttl,
         password: this.settings.password,
         isSecure: this.settings.isSecure !== false,
         isHttpOnly: this.settings.isHttpOnly !== false,
