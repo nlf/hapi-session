@@ -12,7 +12,7 @@ var Scheme = function (server, options) {
 
     this.hapi = server.pack.hapi;
     this.settings = Hoek.clone(options);
-    this.settings.ttl = this.settings.ttl || 1000 * 60 * 24;
+    this.settings.ttl = this.settings.ttl || 1000 * 60 * 60 * 24; // one day
     this.settings.cookie = this.settings.cookie || 'sid';
 
     var cookieOptions = {
