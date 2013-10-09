@@ -14,6 +14,7 @@ var Scheme = function (server, options) {
     this.settings = Hoek.clone(options);
     this.settings.ttl = this.settings.ttl || 1000 * 60 * 60 * 24; // one day
     this.settings.cookie = this.settings.cookie || 'sid';
+    this.cache = server.cache('_sessions', { expiresIn: this.settings.ttl });
 
     var cookieOptions = {
         encoding: 'iron',
@@ -54,7 +55,7 @@ Scheme.prototype.authenticate = function (request, callback) {
             return unauthenticated(self.hapi.error.unauthorized());
         }
 
-        request.server.pack._cache.get({ segment: '_sessions', id: sessionId }, function (err, session) {
+        self.cache.get(sessionId, function (err, session) {
             if (!session) {
                 return unauthenticated(self.hapi.error.unauthorized());
             }
@@ -68,14 +69,14 @@ Scheme.prototype.authenticate = function (request, callback) {
                 if (err || !isValid) {
                     if (self.settings.clearInvalid) {
                         request.clearState(self.settings.cookie);
-                        request.server.pack._cache.drop({ segment: '_sessions', id: sessionId }, function (err) {
+                        self.cache.drop(sessionId, function (err) {
                             return unauthenticated(self.hapi.error.unauthorized('Invalid cookie'), session.item, { log: (err ? { data: err } : 'Failed validation') });
                         });
                     }
                 }
 
                 if (credentials) {
-                    request.server.pack._cache.set({ segment: '_sessions', id: sessionId }, credentials, self.settings.ttl, function (err) {
+                    self.cache.set(sessionId, credentials, 0, function (err) {
                         return callback(err, credentials);
                     });
                 }
@@ -132,18 +133,18 @@ Scheme.prototype.extend = function (request) {
                 // make a new session id and save the cookie
             }
 
-            request.server.pack._cache.set({ segment: '_sessions', id: sessionId }, session, self.settings.ttl, function (err) {
+            self.cache.set(sessionId, session, 0, function (err) {
                 // save to the configured server cache
                 if (typeof callback === 'function') callback(err);
             });
         },
         clear: function (callback) {
-            var session;
+            var sessionId;
 
             if (request.state.hasOwnProperty(self.settings.cookie)) {
-                session = request.state[self.settings.cookie];
+                sessionId = request.state[self.settings.cookie];
 
-                request.server.pack._cache.drop({ segment: '_sessions', id: session }, function (err) {
+                self.cache.drop(sessionId, function (err) {
                     // remove the session from the cache
                     if (typeof callback === 'function') callback(err);
                 });
