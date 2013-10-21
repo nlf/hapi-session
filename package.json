@@ -1,6 +1,6 @@
 {
   "name": "hapi-session",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A simpler session based auth plugin for Hapi",
   "main": "index.js",
   "repository": {
