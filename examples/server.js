@@ -1,5 +1,5 @@
 var Hapi = require('hapi');
-var session = require('../hapi-session');
+var session = require('../');
 var server = new Hapi.Server('127.0.0.1', 8000);
 
 var config = {
