@@ -137,6 +137,9 @@ Scheme.prototype.extend = function (request) {
                 // save to the configured server cache
                 if (typeof callback === 'function') callback(err);
             });
+            
+            // return the sessionId for some use cases
+            return sessionId;
         },
         clear: function (callback) {
             var sessionId;
