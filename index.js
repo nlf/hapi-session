@@ -102,7 +102,12 @@ Scheme.prototype.authenticate = function (request, callback) {
             uri += self.settings.appendNext + '=' + encodeURIComponent(request.url.path);
         }
 
-        return callback(new self.hapi.response.Redirection(uri), session, options);
+        var response = new self.hapi.response.Redirection(uri);
+        if (self.settings.saveNext) {
+          response.state('next', request.url.path, { path: '/' });
+        }
+
+        return callback(response, session, options);
     };
 
     validate();
@@ -137,7 +142,7 @@ Scheme.prototype.extend = function (request) {
                 // save to the configured server cache
                 if (typeof callback === 'function') callback(err);
             });
-            
+
             // return the sessionId for some use cases
             return sessionId;
         },
