@@ -10,13 +10,19 @@ var Scheme = function (server, options) {
     Hoek.assert(options.password, 'Missing required password in options');
     Hoek.assert(!options.appendNext || options.redirectTo, 'Cannot set appendNext without redirectTo');
 
-    this.hapi = server.pack ? server.pack.hapi : server.hapi;
+    if (server.pack) {
+        this.hapi = server.pack.hapi;
+        this.isPlugin = false;
+    } else {
+        this.hapi = server.hapi;
+        this.isPlugin = true;
+    }
 
     Hoek.assert(this.hapi, 'Must pass a server or pack object');
     this.settings = Hoek.clone(options);
     this.settings.ttl = this.settings.ttl || 1000 * 60 * 60 * 24; // one day
     this.settings.cookie = this.settings.cookie || 'sid';
-    this.cache = server.cache('_sessions', { expiresIn: this.settings.ttl });
+    this.cache = this.isPlugin ? server.cache({ expiresIn: this.settings.ttl }) : server.cache('_sessions', { expiresIn: this.settings.ttl });
 
     var cookieOptions = {
         encoding: 'iron',
