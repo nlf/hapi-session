@@ -87,9 +87,9 @@ Scheme.prototype.authenticate = function (request, callback) {
                     self.cache.set(sessionId, credentials, 0, function (err) {
                         return callback(err, credentials);
                     });
+                } else {
+                    return callback(null, session.item);
                 }
-
-                return callback(null, session.item);
             });
         });
     };
